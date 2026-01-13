@@ -12,6 +12,8 @@ type InputProps = {
   keyboardType?: 'default' | 'numeric' | 'email-address' | 'phone-pad'
   leftIcon?: React.ReactNode
   onLeftIconPress?: () => void
+  rightIcon?: React.ReactNode
+  onRightIconPress?: () => void
 }
 
 const Input: React.FC<InputProps> = ({ 
@@ -23,7 +25,9 @@ const Input: React.FC<InputProps> = ({
   style, 
   keyboardType,
   leftIcon,
-  onLeftIconPress
+  onLeftIconPress,
+  rightIcon,
+  onRightIconPress
 }) => {
   return (
     <View style={style}>
@@ -43,6 +47,11 @@ const Input: React.FC<InputProps> = ({
           keyboardType={keyboardType}
           style={styles.input}
         />
+        {rightIcon && (
+          <TouchableOpacity onPress={onRightIconPress} style={styles.rightIconContainer} disabled={!onRightIconPress}>
+            {rightIcon}
+          </TouchableOpacity>
+        )}
       </View>
     </View>
   )
@@ -61,6 +70,11 @@ const styles = StyleSheet.create({
   },
   iconContainer: {
     paddingLeft: 14,
+    justifyContent: 'center',
+    alignItems: 'center'
+  },
+  rightIconContainer: {
+    paddingRight: 14,
     justifyContent: 'center',
     alignItems: 'center'
   },

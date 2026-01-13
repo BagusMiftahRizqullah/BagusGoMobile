@@ -8,12 +8,14 @@ import { NativeStackScreenProps } from '@react-navigation/native-stack'
 import { RootStackParamList } from '../App'
 import { login } from '@services/api'
 import { useAuthStore } from '@store/auth'
+import { Ionicons } from '@expo/vector-icons'
 
 type Props = NativeStackScreenProps<RootStackParamList, 'Login'>
 
 const LoginScreen: React.FC<Props> = ({ navigation }) => {
   const [phone, setPhone] = useState('')
   const [password, setPassword] = useState('')
+  const [showPassword, setShowPassword] = useState(false)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
   const setAuth = useAuthStore((s) => s.setAuth)
@@ -59,7 +61,16 @@ const LoginScreen: React.FC<Props> = ({ navigation }) => {
       <Image source={require('../images/Logo.png')} style={styles.logo} resizeMode="contain" />
       <Card style={styles.card}>
         <Input label="Nomor HP / WhatsApp" value={phone} onChangeText={setPhone} keyboardType="phone-pad" placeholder="Contoh: +62 812-XXXX-XXXX" />
-        <Input label="Password" value={password} onChangeText={setPassword} secureTextEntry placeholder="Minimal 6 karakter" style={{ marginTop: 12 }} />
+        <Input 
+          label="Password" 
+          value={password} 
+          onChangeText={setPassword} 
+          secureTextEntry={!showPassword} 
+          placeholder="Minimal 6 karakter" 
+          style={{ marginTop: 12 }} 
+          rightIcon={<Ionicons name={showPassword ? 'eye-off' : 'eye'} size={24} color="#888" />}
+          onRightIconPress={() => setShowPassword(!showPassword)}
+        />
         {error ? <Text style={styles.error}>{error}</Text> : null}
         <Button label="Login" onPress={onSubmit} loading={loading} style={{ marginTop: 16 }} />
         <Text style={styles.link} onPress={() => navigation.navigate('Register')}>Belum punya akun? Daftar</Text>
