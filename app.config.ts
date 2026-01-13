@@ -19,7 +19,10 @@ export default ({ config }: { config: any }) => ({
       googleMapsApiKey: process.env.GOOGLE_MAPS_API_KEY || ''
     },
     infoPlist: {
-      NSLocationWhenInUseUsageDescription: 'Aplikasi memerlukan akses lokasi untuk optimisasi rute perjalanan.'
+      NSLocationWhenInUseUsageDescription: 'Aplikasi memerlukan akses lokasi untuk optimisasi rute perjalanan.',
+      NSAppTransportSecurity: {
+        NSAllowsArbitraryLoads: true
+      }
     }
   },
   android: {
@@ -44,7 +47,10 @@ export default ({ config }: { config: any }) => ({
   },
   plugins: [],
   extra: {
-    API_BASE_URL: process.env.API_BASE_URL || 'http://localhost:3001',
-    GOOGLE_MAPS_API_KEY: process.env.GOOGLE_MAPS_API_KEY || ''
+    API_BASE_URL: process.env.API_BASE_URL || 'http://144.202.24.24/bagusgo',
+    GOOGLE_MAPS_API_KEY: process.env.GOOGLE_MAPS_API_KEY || '',
+    eas: {
+      projectId: 'b274ad4f-23fc-4fff-b833-0b3de4729e63'
+    }
   }
 })
