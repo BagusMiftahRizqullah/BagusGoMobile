@@ -7,6 +7,7 @@ import { RootStackParamList } from '../App'
 import { Colors } from '@theme/colors'
 import Button from '@components/Button'
 import Card from '@components/Card'
+import Loading from '@components/Loading'
 import { useTripStore } from '@store/trip'
 import * as ImagePicker from 'expo-image-picker'
 import { CameraView, useCameraPermissions } from 'expo-camera'
@@ -195,7 +196,7 @@ const AddAddressScreen: React.FC = () => {
             }}
             renderLeftButton={() => (
               <TouchableOpacity onPress={startCamera} style={styles.leftIcon}>
-                <AntDesign name="scan" size={24} color={Colors.primary} />
+                <AntDesign name="scan1" size={24} color={Colors.primary} />
               </TouchableOpacity>
             )}
             textInputProps={{
@@ -253,6 +254,7 @@ const AddAddressScreen: React.FC = () => {
         
         <Button label="Simpan" onPress={save} style={{ marginTop: 24, zIndex: 0 }} loading={loading} />
       </ScrollView>
+      {loading ? <Loading /> : null}
     </SafeAreaView>
   )
 }

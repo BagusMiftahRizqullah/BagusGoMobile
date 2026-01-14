@@ -1,7 +1,8 @@
 import React, { useState, useRef } from 'react'
-import { View, Text, StyleSheet, ActivityIndicator, FlatList, TouchableOpacity, Linking, Alert } from 'react-native'
+import { View, Text, StyleSheet, FlatList, TouchableOpacity, Linking, Alert } from 'react-native'
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context'
 import { Colors } from '@theme/colors'
+import Loading from '@components/Loading'
 import { useTripStore } from '@store/trip'
 import { useAuthStore } from '@store/auth'
 import { getCurrentLocation } from '@services/location'
@@ -147,7 +148,6 @@ const OptimizeResultScreen: React.FC = () => {
           ListHeaderComponent={
             <>
               <Text style={styles.title}>Hasil Optimasi</Text>
-              {loading ? <ActivityIndicator color={Colors.primary} /> : null}
               {error ? <Text style={styles.error}>{error}</Text> : null}
             </>
           }
@@ -162,6 +162,7 @@ const OptimizeResultScreen: React.FC = () => {
             />
           )}
         />
+        {loading ? <Loading /> : null}
       </SafeAreaView>
     </GestureHandlerRootView>
   )

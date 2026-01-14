@@ -3,6 +3,7 @@ import { View, Text, StyleSheet, KeyboardAvoidingView, Platform, Image } from 'r
 import Card from '@components/Card'
 import Input from '@components/Input'
 import Button from '@components/Button'
+import Loading from '@components/Loading'
 import { Colors } from '@theme/colors'
 import { NativeStackScreenProps } from '@react-navigation/native-stack'
 import { RootStackParamList } from '../App'
@@ -56,6 +57,7 @@ const RegisterScreen: React.FC<Props> = ({ navigation }) => {
         <Button label="Register" onPress={onSubmit} loading={loading} style={{ marginTop: 16 }} />
         <Text style={styles.link} onPress={() => navigation.navigate('Login')}>Sudah punya akun? Login</Text>
       </Card>
+      {loading ? <Loading /> : null}
     </KeyboardAvoidingView>
   )
 }

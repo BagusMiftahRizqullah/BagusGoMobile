@@ -1,8 +1,9 @@
 import React, { useState } from 'react'
-import { View, Text, StyleSheet, KeyboardAvoidingView, Platform, ActivityIndicator, Image, Alert, Linking } from 'react-native'
+import { View, Text, StyleSheet, KeyboardAvoidingView, Platform, Image, Alert, Linking } from 'react-native'
 import Card from '@components/Card'
 import Input from '@components/Input'
 import Button from '@components/Button'
+import Loading from '@components/Loading'
 import { Colors } from '@theme/colors'
 import { NativeStackScreenProps } from '@react-navigation/native-stack'
 import { RootStackParamList } from '../App'
@@ -77,7 +78,7 @@ const LoginScreen: React.FC<Props> = ({ navigation }) => {
 
          {/* <Text style={styles.link} onPress={() => navigation.navigate('Subscription')}>Subscribe Sekarang</Text> */}
       </Card>
-      {loading ? <ActivityIndicator color={Colors.primary} style={{ marginTop: 16 }} /> : null}
+      {loading ? <Loading /> : null}
     </KeyboardAvoidingView>
   )
 }
