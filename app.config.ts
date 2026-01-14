@@ -28,6 +28,8 @@ export default ({ config }: { config: any }) => ({
   android: {
     package: 'com.bagusgo.mobile',
     permissions: [
+      'INTERNET',
+      'ACCESS_NETWORK_STATE',
       'ACCESS_COARSE_LOCATION',
       'ACCESS_FINE_LOCATION'
     ],
@@ -45,7 +47,16 @@ export default ({ config }: { config: any }) => ({
   web: {
     bundler: 'metro'
   },
-  plugins: [],
+  plugins: [
+    [
+      'expo-build-properties',
+      {
+        android: {
+          usesCleartextTraffic: true
+        }
+      }
+    ]
+  ],
   extra: {
     API_BASE_URL: process.env.API_BASE_URL || 'http://144.202.24.24/bagusgo',
     GOOGLE_MAPS_API_KEY: process.env.GOOGLE_MAPS_API_KEY || '',

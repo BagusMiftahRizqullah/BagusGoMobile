@@ -1,5 +1,5 @@
 import React from 'react'
-import { View, StyleSheet, ViewStyle, Animated, Easing } from 'react-native'
+import { View, StyleSheet, ViewStyle, Animated, Easing, Modal } from 'react-native'
 import { Colors } from '@theme/colors'
 
 interface LoadingProps {
@@ -48,21 +48,23 @@ const Loading: React.FC<LoadingProps> = ({ fullscreen = true, size = 120, style 
 
   if (fullscreen) {
     return (
-      <View style={[styles.overlay, style]}>
-        <Animated.Image
-          source={require('../images/Logo.png')}
-          style={[
-            styles.logo,
-            {
-              width: size,
-              height: size * 0.4,
-              opacity,
-              transform: [{ scale }],
-            },
-          ]}
-          resizeMode="contain"
-        />
-      </View>
+      <Modal transparent={true} animationType="fade" visible={true} statusBarTranslucent={true}>
+        <View style={[styles.overlay, style]}>
+          <Animated.Image
+            source={require('../images/Logo.png')}
+            style={[
+              styles.logo,
+              {
+                width: size,
+                height: size * 0.4,
+                opacity,
+                transform: [{ scale }],
+              },
+            ]}
+            resizeMode="contain"
+          />
+        </View>
+      </Modal>
     )
   }
 
