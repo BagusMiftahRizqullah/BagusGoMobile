@@ -5,15 +5,36 @@
 node_modules/
 web-build/
 dist/
-.DS_Store
-.env
-.env.*
-android/
-ios/
 coverage/
 *.tsbuildinfo
+
+# Security and Environment variables
+.env
+.env.*
+*.jks
+*.keystore
+*.p12
+*.pem
+*.cer
+
+# Generated Native Projects (Managed Workflow)
+# If you are using the "bare" workflow or "prebuild", you might want to remove these lines
+# to commit your native code.
+android/
+ios/
+
+# Logs
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+*.log
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Editor
 .vscode/
 .idea/
+*.swp
+*.swo

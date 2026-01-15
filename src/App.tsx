@@ -1,5 +1,5 @@
 import 'react-native-gesture-handler'
-import React, { useEffect, useState, useCallback } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import { View } from 'react-native'
 import { NavigationContainer, DefaultTheme } from '@react-navigation/native'
 import { createNativeStackNavigator } from '@react-navigation/native-stack'
@@ -15,8 +15,7 @@ import OptimizeResultScreen from '@screens/OptimizeResultScreen'
 import SubscriptionScreen from '@screens/SubscriptionScreen'
 import { useAuthStore } from '@store/auth'
 
-// Prevent splash screen from auto-hiding
-SplashScreen.preventAutoHideAsync()
+SplashScreen.preventAutoHideAsync().catch(() => {})
 
 export type RootStackParamList = {
   Login: undefined
@@ -40,15 +39,9 @@ export default function App(): React.JSX.Element | null {
   const [appIsReady, setAppIsReady] = useState(false)
 
   useEffect(() => {
-    async function prepare() {
+    const prepare = async () => {
       try {
-        // Pre-load fonts, make any API calls you need to do here
-        // await Font.loadAsync(Entypo.font);
-        
-        // Delay for 2 seconds to ensure splash screen is visible
-        await new Promise(resolve => setTimeout(resolve, 2000))
-      } catch (e) {
-        console.warn(e)
+        // Tempat untuk preload font / data jika diperlukan
       } finally {
         setAppIsReady(true)
       }
@@ -59,7 +52,7 @@ export default function App(): React.JSX.Element | null {
 
   const onLayoutRootView = useCallback(async () => {
     if (appIsReady) {
-      await SplashScreen.hideAsync()
+      await SplashScreen.hideAsync().catch(() => {})
     }
   }, [appIsReady])
 
