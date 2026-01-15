@@ -12,6 +12,7 @@ import HomeScreen from '@screens/HomeScreen'
 import AddAddressScreen from '@screens/AddAddressScreen'
 import OptimizeResultScreen from '@screens/OptimizeResultScreen'
 import SubscriptionScreen from '@screens/SubscriptionScreen'
+import MapSelectionScreen from '@screens/MapSelectionScreen'
 import { useAuthStore } from '@store/auth'
 
 export type RootStackParamList = {
@@ -19,9 +20,10 @@ export type RootStackParamList = {
   Register: undefined
   Home: undefined
   TripList: undefined
-  AddAddress: undefined
+  AddAddress: { address?: string; lat?: number; lng?: number } | undefined
   OptimizeResult: undefined
   Subscription: undefined
+  MapSelection: undefined
 }
 
 const Stack = createNativeStackNavigator<RootStackParamList>()
@@ -80,6 +82,7 @@ export default function App(): React.JSX.Element | null {
               <Stack.Screen name="Home" component={HomeScreen} />
               <Stack.Screen name="TripList" component={TripListScreen} />
               <Stack.Screen name="AddAddress" component={AddAddressScreen} />
+              <Stack.Screen name="MapSelection" component={MapSelectionScreen} />
               <Stack.Screen name="OptimizeResult" component={OptimizeResultScreen} />
             </>
           )}

@@ -1,8 +1,33 @@
+import { Platform, PermissionsAndroid } from 'react-native'
 import * as Location from 'expo-location'
 
+async function ensureLocationPermission(): Promise<void> {
+  if (Platform.OS === 'android') {
+    const result = await PermissionsAndroid.request(
+      PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
+      {
+        title: 'Izin Lokasi',
+        message: 'BagusGo membutuhkan akses lokasi untuk menentukan posisi kamu di peta.',
+        buttonPositive: 'Izinkan',
+        buttonNegative: 'Tolak',
+        buttonNeutral: 'Nanti Saja',
+      },
+    )
+
+    if (result !== PermissionsAndroid.RESULTS.GRANTED) {
+      throw new Error('Izin lokasi ditolak. Mohon izinkan akses lokasi di pengaturan.')
+    }
+  } else {
+    const { status } = await Location.requestForegroundPermissionsAsync()
+
+    if (status !== 'granted') {
+      throw new Error('Izin lokasi ditolak. Mohon izinkan akses lokasi.')
+    }
+  }
+}
+
 export async function getCurrentLocation(): Promise<{ lat: number; lng: number }> {
-  const { status } = await Location.requestForegroundPermissionsAsync()
-  if (status !== 'granted') throw new Error('Izin lokasi ditolak. Mohon izinkan akses lokasi.')
+  await ensureLocationPermission()
 
   const enabled = await Location.hasServicesEnabledAsync()
   if (!enabled) throw new Error('Layanan lokasi tidak aktif. Mohon aktifkan GPS.')

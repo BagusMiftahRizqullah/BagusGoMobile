@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react'
 import { View, Text, StyleSheet, Image, Alert, TouchableOpacity, ScrollView, Modal, Dimensions } from 'react-native'
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context'
-import { useNavigation } from '@react-navigation/native'
+import { useNavigation, useRoute, RouteProp } from '@react-navigation/native'
 import { NativeStackNavigationProp } from '@react-navigation/native-stack'
 import { RootStackParamList } from '../App'
 import { Colors } from '@theme/colors'
@@ -21,8 +21,11 @@ const GOOGLE_MAPS_API_KEY = extra?.GOOGLE_MAPS_API_KEY || ''
 const { width, height } = Dimensions.get('window')
 const MASK_DIMENSION = width - 60
 
+type AddAddressRouteProp = RouteProp<RootStackParamList, 'AddAddress'>
+
 const AddAddressScreen: React.FC = () => {
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>()
+  const route = useRoute<AddAddressRouteProp>()
   const addAddress = useTripStore((s) => s.addAddress)
   const addresses = useTripStore((s) => s.addresses)
   const [text, setText] = useState('')
@@ -33,6 +36,12 @@ const AddAddressScreen: React.FC = () => {
   const cameraRef = useRef<CameraView>(null)
   const ref = useRef<GooglePlacesAutocompleteRef>(null)
   const insets = useSafeAreaInsets()
+
+  useEffect(() => {
+    if (route.params?.address) {
+      setText(route.params.address)
+    }
+  }, [route.params?.address])
 
   useEffect(() => {
     if (text) {
@@ -130,6 +139,10 @@ const AddAddressScreen: React.FC = () => {
     ref.current?.setAddressText('')
     setImageUri(null)
     navigation.goBack()
+  }
+
+  const openMapSelection = (): void => {
+    navigation.navigate('MapSelection')
   }
 
   return (
@@ -238,6 +251,10 @@ const AddAddressScreen: React.FC = () => {
             nearbyPlacesAPI='GooglePlacesSearch'
             debounce={400}
           />
+          <TouchableOpacity style={styles.mapSelectButton} onPress={openMapSelection}>
+            <Ionicons name="map" size={20} color={Colors.primary} />
+            <Text style={styles.mapSelectText}>Pilih dari Peta</Text>
+          </TouchableOpacity>
         </View>
 
         {text ? (
@@ -268,6 +285,16 @@ const styles = StyleSheet.create({
     zIndex: 1,
   },
   label: { color: Colors.text, marginBottom: 8, fontWeight: '600' },
+  mapSelectButton: {
+    marginTop: 12,
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  mapSelectText: {
+    marginLeft: 8,
+    color: Colors.primary,
+    fontWeight: '600',
+  },
   leftIcon: {
     padding: 10,
     justifyContent: 'center',
