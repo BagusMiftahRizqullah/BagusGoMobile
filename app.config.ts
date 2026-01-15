@@ -58,8 +58,8 @@ export default ({ config }: { config: any }) => ({
     ]
   ],
   extra: {
-    API_BASE_URL: process.env.API_BASE_URL || 'http://144.202.24.24/bagusgo',
-    GOOGLE_MAPS_API_KEY: process.env.GOOGLE_MAPS_API_KEY || '',
+    API_BASE_URL: process.env.API_BASE_URL,
+    GOOGLE_MAPS_API_KEY: process.env.GOOGLE_MAPS_API_KEY,
     eas: {
       projectId: 'b274ad4f-23fc-4fff-b833-0b3de4729e63'
     }
