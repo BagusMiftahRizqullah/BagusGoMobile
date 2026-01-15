@@ -44,6 +44,7 @@ api.interceptors.response.use(response => {
 })
 
 export type LoginPayload = { phone_number: string; password: string }
+export type RegisterPayload = LoginPayload & { name?: string }
 export type AuthResponse = { status: string; token: string; user?: { id: string; phone_number: string } }
 export type OptimizeRequest = { origin: { lat: number; lng: number }; destinations: string[] }
 export type OptimizeItem = { address: string; distance_km: number; duration: string }
@@ -53,7 +54,7 @@ export async function login(payload: LoginPayload): Promise<AuthResponse> {
   return r.data
 }
 
-export async function register(payload: LoginPayload): Promise<AuthResponse> {
+export async function register(payload: RegisterPayload): Promise<AuthResponse> {
   const r = await api.post('/api/auth/register', payload)
   return r.data
 }

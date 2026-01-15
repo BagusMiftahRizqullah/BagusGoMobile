@@ -14,6 +14,7 @@ import { Ionicons } from '@expo/vector-icons'
 type Props = NativeStackScreenProps<RootStackParamList, 'Register'>
 
 const RegisterScreen: React.FC<Props> = ({ navigation }) => {
+  const [name, setName] = useState('')
   const [phone, setPhone] = useState('')
   const [password, setPassword] = useState('')
   const [showPassword, setShowPassword] = useState(false)
@@ -25,7 +26,7 @@ const RegisterScreen: React.FC<Props> = ({ navigation }) => {
     setError('')
     setLoading(true)
     try {
-      await register({ phone_number: phone, password })
+      await register({ phone_number: phone, password, ...(name ? { name } : {}) })
       const res = await login({ phone_number: phone, password })
       setAuth(res.token, res.user || null)
       navigation.replace('Home')
@@ -41,6 +42,7 @@ const RegisterScreen: React.FC<Props> = ({ navigation }) => {
       <Image source={require('../images/Logo.png')} style={styles.logo} resizeMode="contain" />
       <Text style={styles.title}>Daftar</Text>
       <Card>
+        <Input label="Nama Lengkap" value={name} onChangeText={setName} placeholder="Nama Anda" />
         <Input label="Nomor HP / WhatsApp" value={phone} onChangeText={setPhone} keyboardType="phone-pad" placeholder="Contoh: +62 812-XXXX-XXXX" />
         <Input 
           label="Password" 

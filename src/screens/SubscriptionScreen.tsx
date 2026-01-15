@@ -18,17 +18,19 @@ const PLANS = [
 
 const SubscriptionScreen: React.FC<Props> = ({ navigation }) => {
   const [selectedPlan, setSelectedPlan] = useState(PLANS[0])
+  const [name, setName] = useState('')
   const [phoneNumber, setPhoneNumber] = useState('')
   
   const handleWhatsApp = () => {
-    if (!phoneNumber.trim()) {
-      Alert.alert('Mohon isi nomor HP', 'Nomor HP diperlukan untuk aktivasi akun.')
+    if (!name.trim() || !phoneNumber.trim()) {
+      Alert.alert('Mohon lengkapi data', 'Nama dan Nomor HP diperlukan untuk aktivasi akun.')
       return
     }
 
     const message = `Halo Admin BagusGo, saya ingin aktivasi berlangganan.
 
 Plan: ${selectedPlan.name} (${selectedPlan.price})
+Nama: ${name}
 No HP: ${phoneNumber}
 
 Berikut bukti transfer saya:`
@@ -77,11 +79,18 @@ Berikut bukti transfer saya:`
         <Card style={styles.formCard}>
           <Text style={styles.sectionTitle}>Data Pendaftar</Text>
           <Input 
+            label="Nama Lengkap" 
+            placeholder="Nama Anda" 
+            value={name} 
+            onChangeText={setName} 
+          />
+          <Input 
             label="Nomor HP Terdaftar" 
             placeholder="Contoh: 081234567890" 
             value={phoneNumber} 
             onChangeText={setPhoneNumber} 
             keyboardType="phone-pad"
+            style={{ marginTop: 12 }}
           />
           
           <View style={styles.transferInfo}>
