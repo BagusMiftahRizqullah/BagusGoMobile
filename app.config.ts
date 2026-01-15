@@ -6,12 +6,8 @@ export default ({ config }: { config: any }) => ({
   slug: 'bagusgo-mobile',
   version: '1.0.0',
   orientation: 'portrait',
-  icon: './src/images/Logo.png',
-  splash: {
-    image: './src/images/SplashScreen.png',
-    resizeMode: 'cover',
-    backgroundColor: '#ffffff'
-  },
+  icon: './src/images/ic_launcher.png',
+  userInterfaceStyle: 'light',
   ios: {
     bundleIdentifier: 'com.bagusgo.mobile',
     supportsTablet: true,
@@ -35,7 +31,7 @@ export default ({ config }: { config: any }) => ({
     ],
     usesCleartextTraffic: true,
     adaptiveIcon: {
-      foregroundImage: './src/images/Logo.png',
+      foregroundImage: './src/images/ic_launcher.png',
       backgroundColor: '#ffffff'
     },
     config: {
@@ -58,8 +54,8 @@ export default ({ config }: { config: any }) => ({
     ]
   ],
   extra: {
-    API_BASE_URL: process.env.API_BASE_URL,
-    GOOGLE_MAPS_API_KEY: process.env.GOOGLE_MAPS_API_KEY,
+    API_BASE_URL: process.env.API_BASE_URL || 'http://144.202.24.24/bagusgo',
+    GOOGLE_MAPS_API_KEY: process.env.GOOGLE_MAPS_API_KEY || '',
     eas: {
       projectId: 'b274ad4f-23fc-4fff-b833-0b3de4729e63'
     }
