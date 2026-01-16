@@ -1,5 +1,5 @@
 import React, { useState, useRef } from 'react'
-import { View, Text, StyleSheet, FlatList, TouchableOpacity, Linking, Alert } from 'react-native'
+import { View, Text, StyleSheet, TouchableOpacity, Linking, Alert } from 'react-native'
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context'
 import { Colors } from '@theme/colors'
 import Loading from '@components/Loading'
@@ -7,23 +7,28 @@ import { useTripStore } from '@store/trip'
 import { useAuthStore } from '@store/auth'
 import { getCurrentLocation } from '@services/location'
 import { optimizeRoute, OptimizeItem } from '@services/api'
-import { Swipeable, GestureHandlerRootView } from 'react-native-gesture-handler'
+import { GestureHandlerRootView, Swipeable } from 'react-native-gesture-handler'
 import { MaterialIcons } from '@expo/vector-icons'
+import DraggableFlatList, { RenderItemParams } from 'react-native-draggable-flatlist'
 
-const OptimizeItemRow = ({ 
-  item, 
-  index, 
-  isDone, 
-  markDone, 
-  markUndone, 
-  openMaps 
-}: { 
-  item: OptimizeItem, 
-  index: number, 
-  isDone: boolean, 
-  markDone: (i: number) => void, 
-  markUndone: (i: number) => void,
+type OptimizeItemRowProps = {
+  item: OptimizeItem
+  index: number
+  isDone: boolean
+  markDone: (i: number) => void
+  markUndone: (i: number) => void
   openMaps: (addr: string) => void
+  drag: () => void
+}
+
+const OptimizeItemRow: React.FC<OptimizeItemRowProps> = ({
+  item,
+  index,
+  isDone,
+  markDone,
+  markUndone,
+  openMaps,
+  drag,
 }) => {
   const swipeableRef = useRef<Swipeable>(null)
 
@@ -55,13 +60,19 @@ const OptimizeItemRow = ({
         swipeableRef.current?.close()
       }}
     >
-      <TouchableOpacity 
-        style={[styles.item, isDone && styles.itemDone]} 
+      <TouchableOpacity
+        style={[styles.item, isDone && styles.itemDone]}
         onPress={() => openMaps(item.address)}
+        activeOpacity={0.9}
       >
-        <View style={[styles.badge, isDone && styles.badgeDone]}>
+        <TouchableOpacity
+          onLongPress={drag}
+          delayLongPress={150}
+          style={[styles.badge, isDone && styles.badgeDone]}
+          activeOpacity={0.7}
+        >
           <Text style={styles.badgeText}>{index + 1}</Text>
-        </View>
+        </TouchableOpacity>
         <View style={{ flex: 1 }}>
           <Text style={[styles.itemTitle, isDone && styles.textDone]}>{item.address}</Text>
           <Text style={[styles.itemSub, isDone && styles.textDone]}>
@@ -141,7 +152,7 @@ const OptimizeResultScreen: React.FC = () => {
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
       <SafeAreaView style={styles.container} edges={['top', 'left', 'right']}>
-        <FlatList
+        <DraggableFlatList
           data={results}
           keyExtractor={(item, idx) => `${idx}-${item.address}`}
           contentContainerStyle={{ paddingBottom: 20 + insets.bottom }}
@@ -151,16 +162,23 @@ const OptimizeResultScreen: React.FC = () => {
               {error ? <Text style={styles.error}>{error}</Text> : null}
             </>
           }
-          renderItem={({ item, index }) => (
-            <OptimizeItemRow 
-              item={item} 
-              index={index} 
-              isDone={doneItems.has(index)} 
-              markDone={markDone} 
-              markUndone={markUndone} 
-              openMaps={openMaps} 
-            />
-          )}
+          onDragEnd={({ data }) => setResults(data)}
+          renderItem={(params: RenderItemParams<OptimizeItem>) => {
+            const { item, drag, getIndex } = params
+            const index = getIndex?.() ?? 0
+
+            return (
+              <OptimizeItemRow
+                item={item}
+                index={index}
+                isDone={doneItems.has(index)}
+                markDone={markDone}
+                markUndone={markUndone}
+                openMaps={openMaps}
+                drag={drag}
+              />
+            )
+          }}
         />
         {loading ? <Loading /> : null}
       </SafeAreaView>

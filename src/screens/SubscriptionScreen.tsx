@@ -11,13 +11,19 @@ import { MaterialIcons, FontAwesome5 } from '@expo/vector-icons'
 
 type Props = NativeStackScreenProps<RootStackParamList, 'Subscription'>
 
-const PLANS = [
-  { id: 'monthly', name: 'Bulanan', price: 'Rp 99.000', duration: '30 Hari' },
-  { id: 'yearly', name: 'Tahunan', price: 'Rp 1.200.000', duration: '365 Hari' },
+type Plan = {
+  id: 'daily' | 'monthly'
+  durationDays: number
+  priceIdr: number
+}
+
+const PLANS: Plan[] = [
+  { id: 'daily', durationDays: 1, priceIdr: 18000 },
+  { id: 'monthly', durationDays: 30, priceIdr: 50000 },
 ]
 
 const SubscriptionScreen: React.FC<Props> = ({ navigation }) => {
-  const [selectedPlan, setSelectedPlan] = useState(PLANS[0])
+  const [selectedPlan, setSelectedPlan] = useState<Plan>(PLANS[0])
   const [name, setName] = useState('')
   const [phoneNumber, setPhoneNumber] = useState('')
   
@@ -27,9 +33,13 @@ const SubscriptionScreen: React.FC<Props> = ({ navigation }) => {
       return
     }
 
+    const planName = selectedPlan.id === 'daily' ? 'Harian' : 'Bulanan'
+    const priceText = `Rp ${selectedPlan.priceIdr.toLocaleString('id-ID')}`
+    const durationText = `${selectedPlan.durationDays} Hari`
+
     const message = `Halo Admin BagusGo, saya ingin aktivasi berlangganan.
 
-Plan: ${selectedPlan.name} (${selectedPlan.price})
+Plan: ${planName} (${priceText}, per ${durationText})
 Nama: ${name}
 No HP: ${phoneNumber}
 
@@ -55,6 +65,9 @@ Berikut bukti transfer saya:`
         <View style={styles.plansContainer}>
           {PLANS.map((plan) => {
             const isSelected = selectedPlan.id === plan.id
+            const planName = plan.id === 'daily' ? 'Harian' : 'Bulanan'
+            const priceText = `Rp ${plan.priceIdr.toLocaleString('id-ID')}`
+            const durationText = `per ${plan.durationDays} Hari`
             return (
               <TouchableOpacity 
                 key={plan.id} 
@@ -63,10 +76,10 @@ Berikut bukti transfer saya:`
                 style={[styles.planCard, isSelected && styles.planCardSelected]}
               >
                 <View style={styles.planHeader}>
-                  <Text style={[styles.planName, isSelected && styles.textSelected]}>{plan.name}</Text>
+                  <Text style={[styles.planName, isSelected && styles.textSelected]}>{planName}</Text>
                 </View>
-                <Text style={[styles.planPrice, isSelected && styles.textSelected]}>{plan.price}</Text>
-                <Text style={[styles.planDuration, isSelected && styles.textSelected]}>per {plan.duration}</Text>
+                <Text style={[styles.planPrice, isSelected && styles.textSelected]}>{priceText}</Text>
+                <Text style={[styles.planDuration, isSelected && styles.textSelected]}>{durationText}</Text>
                 
                 <View style={[styles.radio, isSelected && styles.radioSelected]}>
                   {isSelected && <View style={styles.radioInner} />}

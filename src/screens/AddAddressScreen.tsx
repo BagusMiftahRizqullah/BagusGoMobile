@@ -192,7 +192,15 @@ const AddAddressScreen: React.FC = () => {
         contentContainerStyle={[styles.scrollContent, { paddingBottom: 20 + insets.bottom }]} 
         keyboardShouldPersistTaps="handled"
       >
-        <Text style={styles.title}>Tambah Alamat</Text>
+        <View style={styles.headerRow}>
+          <Text style={styles.title}>Tambah Alamat</Text>
+          <TouchableOpacity
+            style={styles.savedIconButton}
+            onPress={() => navigation.navigate('SavedAddresses')}
+          >
+            <Ionicons name="bookmark" size={22} color={Colors.primary} />
+          </TouchableOpacity>
+        </View>
         
         <View style={styles.searchContainer}>
           <Text style={styles.label}>Cari Lokasi</Text>
@@ -279,7 +287,16 @@ const AddAddressScreen: React.FC = () => {
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: Colors.background },
   scrollContent: { padding: 20 },
+  headerRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
   title: { fontSize: 24, fontWeight: '700', color: Colors.text, marginBottom: 12 },
+  savedIconButton: {
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+  },
   preview: { width: '100%', height: 240, borderRadius: 14, marginTop: 16, backgroundColor: '#fff' },
   searchContainer: {
     zIndex: 1,

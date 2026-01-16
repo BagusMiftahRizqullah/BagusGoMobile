@@ -13,6 +13,7 @@ import AddAddressScreen from '@screens/AddAddressScreen'
 import OptimizeResultScreen from '@screens/OptimizeResultScreen'
 import SubscriptionScreen from '@screens/SubscriptionScreen'
 import MapSelectionScreen from '@screens/MapSelectionScreen'
+import SavedAddressScreen from '@screens/SavedAddressScreen'
 import { useAuthStore } from '@store/auth'
 
 export type RootStackParamList = {
@@ -23,7 +24,17 @@ export type RootStackParamList = {
   AddAddress: { address?: string; lat?: number; lng?: number } | undefined
   OptimizeResult: undefined
   Subscription: undefined
-  MapSelection: undefined
+  MapSelection:
+    | {
+        mode?: 'trip' | 'saved-create' | 'saved-edit'
+        addressId?: string
+        initialAddress?: string
+        initialLabel?: string
+        initialLat?: number
+        initialLng?: number
+      }
+    | undefined
+  SavedAddresses: undefined
 }
 
 const Stack = createNativeStackNavigator<RootStackParamList>()
@@ -78,13 +89,14 @@ export default function App(): React.JSX.Element | null {
               <Stack.Screen name="Subscription" component={SubscriptionScreen} />
             </>
           ) : (
-            <>
-              <Stack.Screen name="Home" component={HomeScreen} />
-              <Stack.Screen name="TripList" component={TripListScreen} />
-              <Stack.Screen name="AddAddress" component={AddAddressScreen} />
-              <Stack.Screen name="MapSelection" component={MapSelectionScreen} />
-              <Stack.Screen name="OptimizeResult" component={OptimizeResultScreen} />
-            </>
+          <>
+            <Stack.Screen name="Home" component={HomeScreen} />
+            <Stack.Screen name="TripList" component={TripListScreen} />
+            <Stack.Screen name="AddAddress" component={AddAddressScreen} />
+            <Stack.Screen name="MapSelection" component={MapSelectionScreen} />
+            <Stack.Screen name="SavedAddresses" component={SavedAddressScreen} />
+            <Stack.Screen name="OptimizeResult" component={OptimizeResultScreen} />
+          </>
           )}
         </Stack.Navigator>
       </NavigationContainer>
