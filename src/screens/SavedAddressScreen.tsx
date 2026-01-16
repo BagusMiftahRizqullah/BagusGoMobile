@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useState } from 'react'
+import React, { useCallback, useMemo, useState } from 'react'
 import { View, Text, StyleSheet, FlatList, TouchableOpacity, Alert, ActivityIndicator } from 'react-native'
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context'
 import { NativeStackScreenProps } from '@react-navigation/native-stack'
@@ -7,29 +7,32 @@ import { RootStackParamList } from '../App'
 import { useAuthStore } from '@store/auth'
 import { Address, fetchAddresses, deleteAddress } from '@services/api'
 import { Ionicons, MaterialIcons } from '@expo/vector-icons'
+import { useFocusEffect } from '@react-navigation/native'
 
 type Props = NativeStackScreenProps<RootStackParamList, 'SavedAddresses'>
 
 type SavedAddressItemProps = {
   item: Address
-  onSelect: (address: Address) => void
+  isSelected: boolean
+  onPress: (address: Address) => void
   onEdit: (address: Address) => void
   onDelete: (address: Address) => void
 }
 
 const PAGE_SIZE = 10
 
-const SavedAddressItem: React.FC<SavedAddressItemProps> = ({ item, onSelect, onEdit, onDelete }) => {
+const SavedAddressItem: React.FC<SavedAddressItemProps> = ({ item, isSelected, onPress, onEdit, onDelete }) => {
   return (
-    <View style={styles.item}>
+    <TouchableOpacity
+      style={[styles.item, isSelected && styles.itemSelected]}
+      onPress={() => onPress(item)}
+      activeOpacity={0.8}
+    >
       <View style={styles.itemContent}>
         <Text style={styles.itemLabel}>{item.label}</Text>
         <Text style={styles.itemAddress}>{item.address}</Text>
       </View>
       <View style={styles.itemActions}>
-        <TouchableOpacity style={styles.selectButton} onPress={() => onSelect(item)}>
-          <Text style={styles.selectText}>Pilih</Text>
-        </TouchableOpacity>
         <TouchableOpacity style={styles.iconButton} onPress={() => onEdit(item)}>
           <MaterialIcons name="edit" size={20} color={Colors.text} />
         </TouchableOpacity>
@@ -37,7 +40,7 @@ const SavedAddressItem: React.FC<SavedAddressItemProps> = ({ item, onSelect, onE
           <MaterialIcons name="delete" size={20} color={Colors.danger} />
         </TouchableOpacity>
       </View>
-    </View>
+    </TouchableOpacity>
   )
 }
 
@@ -50,6 +53,7 @@ const SavedAddressScreen: React.FC<Props> = ({ navigation }) => {
   const [loading, setLoading] = useState(false)
   const [loadingMore, setLoadingMore] = useState(false)
   const [error, setError] = useState('')
+  const [selectedId, setSelectedId] = useState<string | null>(null)
 
   const isAuthorized = useMemo(() => typeof token === 'string' && token.length > 0, [token])
 
@@ -82,9 +86,11 @@ const SavedAddressScreen: React.FC<Props> = ({ navigation }) => {
     [isAuthorized, token]
   )
 
-  useEffect(() => {
-    loadPage(1, true)
-  }, [loadPage])
+  useFocusEffect(
+    useCallback(() => {
+      loadPage(1, true)
+    }, [loadPage])
+  )
 
   const handleRefresh = useCallback(() => {
     loadPage(1, true)
@@ -96,12 +102,9 @@ const SavedAddressScreen: React.FC<Props> = ({ navigation }) => {
     }
   }, [hasMore, loading, loadingMore, loadPage, page])
 
-  const handleSelect = useCallback(
-    (address: Address) => {
-      navigation.navigate('AddAddress', { address: address.address })
-    },
-    [navigation]
-  )
+  const handleItemPress = useCallback((address: Address) => {
+    setSelectedId((prev) => (prev === address.id ? null : address.id))
+  }, [])
 
   const handleEdit = useCallback(
     (address: Address) => {
@@ -144,17 +147,38 @@ const SavedAddressScreen: React.FC<Props> = ({ navigation }) => {
 
   const renderItem = useCallback(
     ({ item }: { item: Address }) => (
-      <SavedAddressItem item={item} onSelect={handleSelect} onEdit={handleEdit} onDelete={handleDelete} />
+      <SavedAddressItem
+        item={item}
+        isSelected={item.id === selectedId}
+        onPress={handleItemPress}
+        onEdit={handleEdit}
+        onDelete={handleDelete}
+      />
     ),
-    [handleDelete, handleEdit, handleSelect]
+    [handleDelete, handleEdit, handleItemPress, selectedId]
   )
 
   const keyExtractor = useCallback((item: Address) => item.id, [])
+
+  const selectedAddress = useMemo(
+    () => items.find((item) => item.id === selectedId) || null,
+    [items, selectedId]
+  )
 
   return (
     <SafeAreaView style={styles.container} edges={['top', 'left', 'right']}>
       <View style={styles.headerRow}>
         <Text style={styles.title}>Saved Address</Text>
+        <TouchableOpacity
+          style={styles.headerAddButton}
+          onPress={() =>
+            navigation.navigate('MapSelection', {
+              mode: 'saved-create',
+            })
+          }
+        >
+          <Ionicons name="add" size={24} color={Colors.primary} />
+        </TouchableOpacity>
       </View>
       {error ? <Text style={styles.errorText}>{error}</Text> : null}
       <FlatList
@@ -177,16 +201,18 @@ const SavedAddressScreen: React.FC<Props> = ({ navigation }) => {
         refreshing={loading}
         onRefresh={handleRefresh}
       />
-      <TouchableOpacity
-        style={[styles.fab, { bottom: 24 + insets.bottom }]}
-        onPress={() =>
-          navigation.navigate('MapSelection', {
-            mode: 'saved-create',
-          })
-        }
-      >
-        <Ionicons name="add" size={28} color="#fff" />
-      </TouchableOpacity>
+      {selectedAddress ? (
+        <TouchableOpacity
+          style={[styles.useButton, { bottom: 88 + insets.bottom }]}
+          onPress={() =>
+            navigation.navigate('AddAddress', {
+              address: selectedAddress.address,
+            })
+          }
+        >
+          <Text style={styles.useButtonText}>Gunakan</Text>
+        </TouchableOpacity>
+      ) : null}
       {!items.length && loading ? (
         <View style={styles.centerLoading}>
           <ActivityIndicator color={Colors.primary} />
@@ -203,6 +229,10 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between',
     marginBottom: 12,
+  },
+  headerAddButton: {
+    paddingHorizontal: 8,
+    paddingVertical: 4,
   },
   title: { fontSize: 24, fontWeight: '700', color: Colors.text },
   errorText: {
@@ -222,6 +252,10 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: Colors.border,
   },
+  itemSelected: {
+    borderColor: Colors.primary,
+    borderWidth: 2,
+  },
   itemContent: {
     marginBottom: 8,
   },
@@ -240,34 +274,28 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'flex-end',
   },
-  selectButton: {
-    paddingHorizontal: 12,
-    paddingVertical: 6,
-    borderRadius: 10,
-    backgroundColor: Colors.primary,
-    marginRight: 8,
-  },
-  selectText: {
-    color: '#fff',
-    fontWeight: '600',
-  },
   iconButton: {
     paddingHorizontal: 8,
     paddingVertical: 6,
   },
-  fab: {
+  footerLoading: {
+    paddingVertical: 12,
+  },
+  useButton: {
     position: 'absolute',
-    right: 24,
-    width: 56,
-    height: 56,
-    borderRadius: 28,
+    left: 20,
+    right: 20,
+    borderRadius: 14,
     backgroundColor: Colors.primary,
+    paddingVertical: 12,
     alignItems: 'center',
     justifyContent: 'center',
     elevation: 4,
   },
-  footerLoading: {
-    paddingVertical: 12,
+  useButtonText: {
+    color: '#fff',
+    fontWeight: '700',
+    fontSize: 16,
   },
   centerLoading: {
     position: 'absolute',
