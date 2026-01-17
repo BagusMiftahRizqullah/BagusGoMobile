@@ -5,7 +5,7 @@ import { RootStackParamList } from '../App'
 import { Colors } from '@theme/colors'
 import Banner from '@components/Banner'
 import { useAuthStore } from '@store/auth'
-import { MaterialIcons } from '@expo/vector-icons'
+import { MaterialIcons, FontAwesome5 } from '@expo/vector-icons'
 
 type Props = NativeStackScreenProps<RootStackParamList, 'Home'>
 
@@ -37,7 +37,7 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
       <Text style={styles.sectionTitle}>Layanan Kami</Text>
       
       <View style={styles.menuGrid}>
-        <TouchableOpacity 
+        <TouchableOpacity
           style={styles.menuItem}
           onPress={() => navigation.navigate('TripList')}
         >
@@ -47,13 +47,15 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
           <Text style={styles.menuText}>Optimisasi Rute</Text>
         </TouchableOpacity>
 
-        {/* Placeholder untuk menu lain */}
-        <View style={[styles.menuItem, styles.disabledMenu]}>
-          <View style={[styles.iconContainer, styles.disabledIcon]}>
-            <MaterialIcons name="more-horiz" size={32} color="#fff" />
+        <TouchableOpacity
+          style={styles.menuItem}
+          onPress={() => navigation.navigate('BagusWhatsapp')}
+        >
+          <View style={styles.iconContainer}>
+            <FontAwesome5 name="whatsapp" size={28} color="#fff" />
           </View>
-          <Text style={[styles.menuText, styles.disabledText]}>Coming Soon</Text>
-        </View>
+          <Text style={styles.menuText}>BagusWhatsapp</Text>
+        </TouchableOpacity>
       </View>
     </ScrollView>
   )

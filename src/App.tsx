@@ -14,6 +14,7 @@ import OptimizeResultScreen from '@screens/OptimizeResultScreen'
 import SubscriptionScreen from '@screens/SubscriptionScreen'
 import MapSelectionScreen from '@screens/MapSelectionScreen'
 import SavedAddressScreen from '@screens/SavedAddressScreen'
+import BagusWhatsappScreen from './screens/BagusWhatsappScreen'
 import { useAuthStore } from '@store/auth'
 
 export type RootStackParamList = {
@@ -24,6 +25,7 @@ export type RootStackParamList = {
   AddAddress: { address?: string; lat?: number; lng?: number } | undefined
   OptimizeResult: undefined
   Subscription: undefined
+  BagusWhatsapp: undefined
   MapSelection:
     | {
         mode?: 'trip' | 'saved-create' | 'saved-edit'
@@ -96,6 +98,7 @@ export default function App(): React.JSX.Element | null {
             <Stack.Screen name="MapSelection" component={MapSelectionScreen} />
             <Stack.Screen name="SavedAddresses" component={SavedAddressScreen} />
             <Stack.Screen name="OptimizeResult" component={OptimizeResultScreen} />
+            <Stack.Screen name="BagusWhatsapp" component={BagusWhatsappScreen} />
           </>
           )}
         </Stack.Navigator>
